@@ -3,23 +3,23 @@ import { Modal } from "@mantine/core";
 import LoginContent from "./login/LoginContent";
 import RegisterContent from "./register/RegisterContent";
 
-interface AuthModalProps {
-  authModalOpened: boolean;
-  setAuthModalOpened: (authModalOpened: boolean) => void;
+interface UserAuthModalProps {
+  userAuthModalOpened: boolean;
+  setUserAuthModalOpened: (authModalOpened: boolean) => void;
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({
-  authModalOpened,
-  setAuthModalOpened,
+const UserAuthModal: React.FC<UserAuthModalProps> = ({
+  userAuthModalOpened,
+  setUserAuthModalOpened,
 }) => {
   const [isLogin, setIsLogin] = useState(true);
 
   return (
     <Modal
-      opened={authModalOpened}
-      onClose={() => setAuthModalOpened(false)}
+      opened={userAuthModalOpened}
+      onClose={() => setUserAuthModalOpened(false)}
       centered
-      size={"md"}
+      size="md"
       overlayProps={{
         backgroundOpacity: 0.55,
         blur: 3,
@@ -34,4 +34,4 @@ const AuthModal: React.FC<AuthModalProps> = ({
   );
 };
 
-export default AuthModal;
+export default UserAuthModal;

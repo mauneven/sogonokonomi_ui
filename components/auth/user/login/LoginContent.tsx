@@ -13,7 +13,7 @@ interface LoginContentProps {
 const LoginContent: React.FC<LoginContentProps> = ({ setIsLogin }) => {
   return (
     <Stack>
-      <Title ta={"center"}>Welcome back!</Title>
+      <Title ta={"center"}>Welcome!</Title>
       <TextInput label="Email" placeholder="you@example.com" required />
       <TextInput label="Password" placeholder="Your password" required />
       <Stack mt="md">
