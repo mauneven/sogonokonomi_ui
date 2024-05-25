@@ -26,13 +26,15 @@ const RegisterContent: React.FC<RegisterContentProps> = ({ setIsLogin }) => {
   const [month, setMonth] = useState<string>("");
   const [day, setDay] = useState<string | null>(null);
   const [dayData, setDayData] = useState<Array<string>>([]);
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
   const [tooltipMessage, setTooltipMessage] = useState<string>("");
-  const [error, setError] = useState<{ message: string, showButtons: boolean } | null>(null);
+  const [error, setError] = useState<{
+    message: string;
+    showButtons: boolean;
+  } | null>(null);
   const router = useRouter();
 
   const getYears = () => {
@@ -76,7 +78,7 @@ const RegisterContent: React.FC<RegisterContentProps> = ({ setIsLogin }) => {
 
   useEffect(() => {
     validateForm();
-  }, [firstName, lastName, email, password, year, month, day]);
+  }, [username, email, password, year, month, day]);
 
   const validatePassword = (password: string) => {
     return (
@@ -86,8 +88,7 @@ const RegisterContent: React.FC<RegisterContentProps> = ({ setIsLogin }) => {
 
   const validateForm = () => {
     if (
-      !firstName ||
-      !lastName ||
+      !username ||
       !email ||
       !password ||
       !validatePassword(password) ||
@@ -96,8 +97,7 @@ const RegisterContent: React.FC<RegisterContentProps> = ({ setIsLogin }) => {
       !day
     ) {
       let message = "Please fill out all fields correctly.";
-      if (!firstName) message = "First name is required.";
-      else if (!lastName) message = "Last name is required.";
+      if (!username) message = "Username is required.";
       else if (!email) message = "Email is required.";
       else if (!password) message = "Password is required.";
       else if (!validatePassword(password))
@@ -117,8 +117,7 @@ const RegisterContent: React.FC<RegisterContentProps> = ({ setIsLogin }) => {
 
   const handleRegister = async () => {
     const user = {
-      firstName,
-      lastName,
+      username,
       email,
       password,
       birthday: `${year}-${month.padStart(2, "0")}-${day?.padStart(2, "0")}`,
@@ -144,7 +143,10 @@ const RegisterContent: React.FC<RegisterContentProps> = ({ setIsLogin }) => {
         handleRegistrationError(data.error);
       }
     } catch (error: any) {
-      setError({ message: "An error occurred. Please try again later.", showButtons: false });
+      setError({
+        message: "An error occurred. Please try again later.",
+        showButtons: false,
+      });
     }
   };
 
@@ -152,10 +154,18 @@ const RegisterContent: React.FC<RegisterContentProps> = ({ setIsLogin }) => {
     switch (errorCode) {
       case "1":
         setError({
-          message: "This email is already registered. Please use a different email.",
-          showButtons: true,
+          message:
+            "This username is already in use. Please write other.",
+          showButtons: false,
         });
         break;
+        case "2":
+          setError({
+            message:
+              "This email is already registered. Please use a different email.",
+            showButtons: true,
+          });
+          break;
       default:
         setError({
           message: "An unknown error occurred. Please try again later.",
@@ -197,22 +207,13 @@ const RegisterContent: React.FC<RegisterContentProps> = ({ setIsLogin }) => {
           )}
         </Alert>
       )}
-      <Group justify="space-between">
-        <TextInput
-          label="First Name"
-          placeholder="First Name"
-          withAsterisk
-          value={firstName}
-          onChange={(event) => setFirstName(event.currentTarget.value)}
-        />
-        <TextInput
-          label="Last Name"
-          placeholder="Last Name"
-          withAsterisk
-          value={lastName}
-          onChange={(event) => setLastName(event.currentTarget.value)}
-        />
-      </Group>
+      <TextInput
+        label="Username"
+        placeholder="@Username"
+        withAsterisk
+        value={username}
+        onChange={(event) => setUsername(event.currentTarget.value)}
+      />
       <TextInput
         label="Email"
         placeholder="Email"
@@ -237,43 +238,48 @@ const RegisterContent: React.FC<RegisterContentProps> = ({ setIsLogin }) => {
           </Text>
         </Popover.Dropdown>
       </Popover>
-      <Text fw={500} size="md">
-        BirthDay
-      </Text>
-      <Group justify="space-between">
-        <Select
-          maw={120}
-          label="Year"
-          placeholder="Pick a year"
-          data={getYears()}
-          value={year}
-          onChange={(value) => handleYearChange(value)}
-          withAsterisk
-        />
-        <Select
-          maw={120}
-          label="Month"
-          placeholder="Pick a month"
-          data={months.map((month) => ({
-            value: month,
-            label: new Date(0, parseInt(month) - 1).toLocaleString("default", {
-              month: "long",
-            }),
-          }))}
-          value={month}
-          onChange={(value) => handleMonthChange(value)}
-          withAsterisk
-        />
-        <Select
-          maw={120}
-          label="Day"
-          placeholder="Pick a day"
-          data={dayData}
-          value={day}
-          onChange={(value) => handleDayChange(value)}
-          withAsterisk
-        />
-      </Group>
+      <Stack gap={0}>
+        <Text fw={500} size="md" pb={0} mb={0}>
+          BirthDay
+        </Text>
+        <Group justify="space-between">
+          <Select
+            maw={120}
+            label="Year"
+            placeholder="Pick a year"
+            data={getYears()}
+            value={year}
+            onChange={(value) => handleYearChange(value)}
+            withAsterisk
+          />
+          <Select
+            maw={120}
+            label="Month"
+            placeholder="Pick a month"
+            data={months.map((month) => ({
+              value: month,
+              label: new Date(0, parseInt(month) - 1).toLocaleString(
+                "default",
+                {
+                  month: "long",
+                }
+              ),
+            }))}
+            value={month}
+            onChange={(value) => handleMonthChange(value)}
+            withAsterisk
+          />
+          <Select
+            maw={120}
+            label="Day"
+            placeholder="Pick a day"
+            data={dayData}
+            value={day}
+            onChange={(value) => handleDayChange(value)}
+            withAsterisk
+          />
+        </Group>
+      </Stack>
       <Group grow>
         <Button onClick={() => setIsLogin(true)} variant="light" color="grey">
           Go back to Login
